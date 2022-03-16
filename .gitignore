@@ -5,3 +5,11 @@ readers/__pycache__/agreader.cpython-310.pyc
 readers/__pycache__/laureaureader.cpython-310.pyc
 readers/__pycache__/pdfreader.cpython-310.pyc
 readers/__pycache__/victorreder.cpython-310.pyc
+__pycache__/settings.cpython-310.pyc
+__pycache__/readerselecter.cpython-39.pyc
+readers/__pycache__/pdfreader.cpython-39.pyc
+readers/__pycache__/laureaureader.cpython-39.pyc
+client_information.json
+readers/__pycache__/speacialpdfreader.cpython-310.pyc
+utils/__pycache__/__init__.cpython-310.pyc
+utils/__pycache__/toolselector.cpython-310.pyc
