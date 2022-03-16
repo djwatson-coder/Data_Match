@@ -1,20 +1,20 @@
 
-from readers.pdfreader import PDFReader
 from readers.laureaureader import LaureauPDFReader
 from readers.agreader import AGPDFReader
-from readers.victorreder import VictorPDFRedear
+from readers.victorreder import VictorPDFReader
+import settings
 
-
-def reader_selector(dir):
-    reader_type = dir_list = dir.split("/")[-3]
+def reader_selector(directory: str):
+    reader_type = directory.split("/")[-1]
     if reader_type == "Lareau":
-        return LaureauPDFReader(dir, reader_type)
+        pdf_reader = LaureauPDFReader(directory, reader_type)
     elif reader_type == "Encon Victor":
-        return VictorPDFRedear(dir, reader_type)
-    if reader_type == "Arthur Gallagher":
-        return AGPDFReader(dir, reader_type)
+        pdf_reader = VictorPDFReader(directory, reader_type)
+    elif reader_type == "Arthur Gallagher":
+        pdf_reader = AGPDFReader(directory, reader_type)
+    else:
+        return
 
-    return None
+    pdf_reader.create_table(settings.write_table)
 
-def get_reader_context(dir):
-    dir_list = dir.split("/")[-3]
+
