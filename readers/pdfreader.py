@@ -13,7 +13,7 @@ class PDFReader:
         self.read_ocr = False
         self.client_name = client_name
 
-    def create_table(self):
+    def create_table(self, write_table: bool):
 
         pdfs = self.get_files()
         data_tables = []
@@ -51,6 +51,9 @@ class PDFReader:
                     line_data = line.split(" ")
                     line_data = self.post_line_split_edits(line_data)
 
+                    if self.end_table_conditions(line_data):
+                        start = False
+
                     if start:
                         if self.add_table_conditions(line_data):
                             line_data = self.pre_table_adjustments(line_data)
@@ -84,9 +87,6 @@ class PDFReader:
                 return idx
         return
 
-    def create_excel(self):
-        return
-
     def replace_decimal_spaces(self, line):
         regex_replace = ["  .  ","  . ","  ."," .  ",".  "," . "," .",". "]
         for i in regex_replace:
@@ -109,6 +109,10 @@ class PDFReader:
 
     @staticmethod
     def start_table_conditions(line_data):
+        return False
+
+    @staticmethod
+    def end_table_conditions(line_data):
         return False
 
     @staticmethod
