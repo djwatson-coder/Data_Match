@@ -3,7 +3,7 @@ from readers.pdfreader import PDFReader
 
 class AGPDFReader(PDFReader):
 
-    def __init__(self):
+    def __init__(self, folder_path, client_name):
         super(AGPDFReader, self).__init__()
         self.start_page = 0
         self.cols = []
