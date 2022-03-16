@@ -1,2 +1,7 @@
 
 .idea/vcs.xml
+__pycache__/readerselecter.cpython-310.pyc
+readers/__pycache__/agreader.cpython-310.pyc
+readers/__pycache__/laureaureader.cpython-310.pyc
+readers/__pycache__/pdfreader.cpython-310.pyc
+readers/__pycache__/victorreder.cpython-310.pyc
