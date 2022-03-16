@@ -2,9 +2,9 @@
 from readers.pdfreader import PDFReader
 
 
-class VictorPDFRedear(PDFReader):
-    def __init__(self):
-        super(VictorPDFRedear, self).__init__()
+class VictorPDFReader(PDFReader):
+    def __init__(self, folder_path, client_name):
+        super(VictorPDFReader, self).__init__()
         self.cols = ["Document Date", "Policy No", "Company", "Effective Date", "Expiration Date",
                      "Program-Pool","Prov","Gross", "Type", "Vendor", "Pay To", "Amount", "Commission",
                      "Office", "Comm PCT", "TXN Code"]
