@@ -7,31 +7,16 @@ import pdfplumber
 import settings
 import numpy
 import openpyxl
+from readers.filereader import FileReader
 
 
-class PDFReader:
+class PDFReader(FileReader):
     def __init__(self, folder_path, client_name):
+        super(PDFReader, self).__init__(folder_path + settings.PAYMENTS_EXTENSION, client_name)
         self.start_page = 0
         self.cols = []
-        self.folder_path = folder_path + settings.PDF_EXTENSION
         self.read_ocr = False
-        self.client_name = client_name
 
-    def create_table(self):
-
-        pdfs = self.get_files()
-        data_tables = []
-        for pdf in pdfs:
-            data_tables.append(self.read_pdf(pdf))
-            print(f"{pdf}: added")
-        df = pd.concat(data_tables, ignore_index=True)
-        if settings.WRITE_TABLE:
-            self.write_table(df)
-
-        return df
-
-    def write_table(self, df):
-        df.to_excel(f"{self.folder_path}/{self.client_name}_Payments.xlsx")
 
     def get_files(self):
 
@@ -43,7 +28,7 @@ class PDFReader:
                 pdfs.append(file)
         return pdfs
 
-    def read_pdf(self, file_path):
+    def read_file(self, file_path):
         company_name = []
         info_lines = []
         pdf_path = f"{self.folder_path}/{file_path}"
