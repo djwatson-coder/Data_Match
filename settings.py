@@ -1,7 +1,8 @@
 import json
 
 WRITE_TABLE = True
-PDF_EXTENSION = "/Payments"
+PAYMENTS_EXTENSION = "/Payments"
+BORDEREAU_EXTENSION = "/Bordereau"
 
 f = open("./client_information.json")
 CLIENT_INFORMATION = json.load(f)["client_information"]
