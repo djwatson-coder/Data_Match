@@ -13,3 +13,6 @@ client_information.json
 readers/__pycache__/speacialpdfreader.cpython-310.pyc
 utils/__pycache__/__init__.cpython-310.pyc
 utils/__pycache__/toolselector.cpython-310.pyc
+readers/__pycache__/__init__.cpython-310.pyc
+readers/__pycache__/excelreader.cpython-310.pyc
+readers/__pycache__/filereader.cpython-310.pyc
