@@ -1,7 +1,7 @@
 import sys
 import settings
 from utils import toolselector
-import readers
+from readers import speacialpdfreader, excelreader
 
 
 def main(client: str):
@@ -12,17 +12,17 @@ def main(client: str):
             attributes = client_info["attributes"]
             break
 
-    payments_reader = getattr(readers.speacialpdfreader, attributes["paymentsReader"])
-    payments_reader = payments_reader(folder_path=attributes["folderPath"], client_name=client)
+    # payments_reader = getattr(speacialpdfreader, attributes["paymentsReader"])
+    # payments_reader = payments_reader(folder_path=attributes["folderPath"], client_name=client)
 
-    # bordereau_reader = getattr(readers.speacialpdfreader, attributes["paymentsReader"])
-    # bordereau_reader.__init__(folder_path=attributes["folderPath"], client_name=client)
+    bordereau_reader = getattr(excelreader, attributes["bordReader"])
+    bordereau_reader = bordereau_reader(folder_path=attributes["folderPath"], client_name=client)
 
     # data_cleaner = select_payments_reader(attributes["redReader"])
     # data_cleaner.__init__(folder_path=attributes["folderPath"], client_name=client)
 
-    payments_reader.create_table()
-    # bordereau_reader.create_table()
+    # payments_reader.create_table()
+    bordereau_reader.create_table()
     # data_cleaner.create_report()
 
 
@@ -38,3 +38,4 @@ if __name__ == '__main__':
 # ToDo create a command line executable file
 # ToDo create a make command to run the script
 # ToDo add OCR to the PDFReader init varaibles
+# ToDo make a readers class that excel and pdf inheret from
