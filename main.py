@@ -1,28 +1,24 @@
 import sys
 import settings
-from utils import toolselector
 from readers import speacialpdfreader, excelreader
+from utils import toolselector as ts
 
 
 def main(client: str):
-    # Select the formatting functions for the given client
-    attributes = {}
-    for client_info in settings.CLIENT_INFORMATION:
-        if client_info["clientId"] == client:
-            attributes = client_info["attributes"]
-            break
 
-    # payments_reader = getattr(speacialpdfreader, attributes["paymentsReader"])
-    # payments_reader = payments_reader(folder_path=attributes["folderPath"], client_name=client)
+    attributes = ts.get_attributes(client, settings.CLIENT_INFORMATION)
 
-    bordereau_reader = getattr(excelreader, attributes["bordReader"])
-    bordereau_reader = bordereau_reader(folder_path=attributes["folderPath"], client_name=client)
+    pay_reader = ts.select_reader(attributes["paymentsReader"])(attributes["folderPath"] + settings.PAYMENTS_EXTENSION,
+                                                                client)
+    bord_reader = ts.select_reader(attributes["bordReader"])(attributes["folderPath"] + settings.BORDEREAU_EXTENSION,
+                                                             client)
+
+    df_pay = pay_reader.create_table()
+    df_bord = bord_reader.create_table()
 
     # data_cleaner = select_payments_reader(attributes["redReader"])
     # data_cleaner.__init__(folder_path=attributes["folderPath"], client_name=client)
 
-    # payments_reader.create_table()
-    bordereau_reader.create_table()
     # data_cleaner.create_report()
 
 
@@ -33,9 +29,7 @@ if __name__ == '__main__':
     except IndexError:
         main(settings.EXAMPLE_NAME)
 
-
-
 # ToDo create a command line executable file
 # ToDo create a make command to run the script
-# ToDo add OCR to the PDFReader init varaibles
-# ToDo make a readers class that excel and pdf inheret from
+# ToDo add OCR to the PDFReader init variables
+# ToDo make a readers class that excel and pdf inherent from
