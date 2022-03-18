@@ -4,29 +4,19 @@ import re
 import pandas as pd
 import os
 import pdfplumber
-import settings
 import numpy
 import openpyxl
 from readers.filereader import FileReader
 
 
 class PDFReader(FileReader):
-    def __init__(self, folder_path, client_name):
-        super(PDFReader, self).__init__(folder_path + settings.PAYMENTS_EXTENSION, client_name)
+    def __init__(self, ocr: bool):
+        super(PDFReader, self).__init__()
         self.start_page = 0
         self.cols = []
-        self.read_ocr = False
-
-
-    def get_files(self):
-
-        pdfs = []
-        for file in os.listdir(self.folder_path):
-            if not self.read_ocr and (file.endswith('.pdf') or file.endswith('.PDF')):
-                pdfs.append(file)
-            elif self.read_ocr and (file.endswith('_OCR.pdf') or file.endswith('_OCR.PDF')):
-                pdfs.append(file)
-        return pdfs
+        self.path_extensions = [".pdf", ".PDF"]
+        if ocr:
+            self.path_extensions = ["_OCR" + path for path in self.path_extensions]
 
     def read_file(self, file_path):
         company_name = []
