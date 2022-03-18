@@ -4,11 +4,13 @@ import re
 
 class LauPDFReader(PDFReader):
     def __init__(self, folder_path, client_name):
-        super(LauPDFReader, self).__init__(folder_path, client_name)
-        self.start_page = 1
+        self.ocr = True
+        super(LauPDFReader, self).__init__(self.ocr)
         self.cols = ['Policy_Number', 'Info_1', 'Info_2', 'Info_3', "Date DE", "Date MISE", "Date",
                      "Info_4", "Info_5", "Info_6", "Prime", "Comm%", "COMM$", "Amount Paid", "Date Due", "Company"]
-        self.read_ocr = True
+        self.start_page = 1
+        self.folder_path = folder_path
+        self.client_name = client_name
 
 
     @staticmethod
@@ -78,9 +80,12 @@ class LauPDFReader(PDFReader):
 class AgDFReader(PDFReader):
 
     def __init__(self, folder_path, client_name):
-        super(AgDFReader, self).__init__()
+        self.ocr = False
+        super(AgDFReader, self).__init__(self.ocr)
         self.start_page = 0
         self.cols = []
+        self.folder_path = folder_path
+        self.client_name = client_name
 
     def post_line_split_edits(self, line_data):
         line_data = list(filter(lambda a: a != '', line_data))
