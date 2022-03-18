@@ -2,15 +2,16 @@
 import pandas as pd
 import numpy as np
 import os
-import settings
 from readers.filereader import FileReader
 
 
 class ExcelReader(FileReader):
     def __init__(self, folder_path: str, client_name: str):
-        super(ExcelReader, self).__init__(folder_path + settings.BORDEREAU_EXTENSION, client_name)
-        self.path_extensions = ["xls", "xlsx", "xlsm"]
+        super(ExcelReader, self).__init__()
         self.cols = ["LAREAU Broker Code", "Corporate Partner/Broker Policy Number", "Company Name", "Net Premium"]
+        self.path_extensions = ["xls", "xlsx", "xlsm"]
+        self.folder_path = folder_path
+        self.client_name = client_name
 
         return
 
