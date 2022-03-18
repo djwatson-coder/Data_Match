@@ -5,9 +5,9 @@ import settings
 
 
 class FileReader:
-    def __init__(self, folder_path: str, client_name: str):
-        self.client_name = client_name
-        self.folder_path = folder_path
+    def __init__(self):
+        self.client_name = ""
+        self.folder_path = ""
         self.path_extensions = []
         return
 
@@ -35,7 +35,6 @@ class FileReader:
 
         # create the table
         final_table = pd.concat(data_tables, ignore_index=True)
-
 
         if settings.WRITE_TABLE:
             self.write_table(final_table)
