@@ -8,6 +8,10 @@ class LauPDFReader(PDFReader):
         super(LauPDFReader, self).__init__(self.ocr)
         self.cols = ['Policy_Number', 'Info_1', 'Info_2', 'Info_3', "Date DE", "Date MISE", "Date",
                      "Info_4", "Info_5", "Info_6", "Prime", "Comm%", "COMM$", "Amount Paid", "Date Due", "Company"]
+        self.keep_cols = {"Policy": "Policy_Number",
+                          "Company": "Company",
+                          "File": "File",
+                          "Amount": "Amount Paid"}
         self.start_page = 1
         self.folder_path = folder_path
         self.client_name = client_name
@@ -75,6 +79,11 @@ class LauPDFReader(PDFReader):
         line_data = list(filter(lambda a: a != '"', line_data))
 
         return line_data
+
+    def format_columns(self, df):
+        
+        return df
+
 
 
 class AgDFReader(PDFReader):
