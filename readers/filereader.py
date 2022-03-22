@@ -9,6 +9,7 @@ class FileReader:
         self.client_name = ""
         self.folder_path = ""
         self.path_extensions = []
+        self.keep_cols = {}
         return
 
     def read_file(self, file):
@@ -30,11 +31,15 @@ class FileReader:
         # read them in
         data_tables = []
         for file in files:
-            data_tables.append(self.read_file(file))
+            table = self.read_file(file)
+            table["File"] = file
+            data_tables.append(table)
             print(f"{file}: added")
 
         # create the table
         final_table = pd.concat(data_tables, ignore_index=True)
+
+        final_table = self.clean_table(final_table)
 
         if settings.WRITE_TABLE:
             self.write_table(final_table)
@@ -43,3 +48,24 @@ class FileReader:
 
     def write_table(self, df):
         df.to_excel(f"{self.folder_path}/Generated/{self.client_name}_Combined.xlsx")
+
+    def clean_table(self, df):
+        df = self.correct_columns(df, self.keep_cols)
+        df = self.format_columns(df)
+
+        return df
+
+    def correct_columns(self, df, cols: dict):
+
+        df.rename(columns={cols['Policy']: 'Policy',
+                           cols['Company']: 'Company',
+                           cols['File']: 'File',
+                           cols['Amount']: 'Amount'},
+                  inplace=True)
+
+        df = df[["Policy", "Company", "File", "Amount"]]
+
+        return df
+
+    def format_columns(self, df):
+        return df
