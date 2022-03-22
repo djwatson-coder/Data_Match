@@ -16,7 +16,7 @@ def main(client: str):
     df_pay = pay_reader.create_table()
     df_bord = bord_reader.create_table()
 
-    # data_cleaner = select_payments_reader(attributes["redReader"])
+    # data_match = select_payments_reader(attributes["redReader"])
     # data_cleaner.__init__(folder_path=attributes["folderPath"], client_name=client)
 
     # data_cleaner.create_report()
