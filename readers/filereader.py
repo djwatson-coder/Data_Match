@@ -19,11 +19,11 @@ class FileReader:
 
         files = []
         for file in os.listdir(self.folder_path):
-            if file.split(".")[-1].lower() in self.path_extensions:
+            if file.endswith(tuple(self.path_extensions)):
                 files.append(file)
         return files
 
-    def create_table(self):
+    def create_table(self, save_path: str, read_type: str):
 
         # get the excels
         files = self.get_files()
@@ -32,7 +32,7 @@ class FileReader:
         data_tables = []
         for file in files:
             table = self.read_file(file)
-            table["File"] = file
+            table = table.assign(File=file)
             data_tables.append(table)
             print(f"{file}: added")
 
@@ -42,12 +42,17 @@ class FileReader:
         final_table = self.clean_table(final_table)
 
         if settings.WRITE_TABLE:
-            self.write_table(final_table)
+            self.write_table(final_table, save_path, read_type)
 
         return final_table
 
-    def write_table(self, df):
-        df.to_excel(f"{self.folder_path}/Generated/{self.client_name}_Combined.xlsx")
+    def write_table(self, df, save_path, read_type):
+        path = f"{save_path}/Generated"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        df.to_excel(f"{path}/{self.client_name}_{read_type}.xlsx")
+
+        print(f"{read_type} Table Written-----")
 
     def clean_table(self, df):
         df = self.correct_columns(df, self.keep_cols)
