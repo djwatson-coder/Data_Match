@@ -7,6 +7,7 @@ import pdfplumber
 import numpy
 import openpyxl
 from readers.filereader import FileReader
+pd.options.mode.chained_assignment = None
 
 
 class PDFReader(FileReader):
