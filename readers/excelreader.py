@@ -8,8 +8,12 @@ from readers.filereader import FileReader
 class ExcelReader(FileReader):
     def __init__(self, folder_path: str, client_name: str):
         super(ExcelReader, self).__init__()
-        self.cols = ["LAREAU Broker Code", "Corporate Partner/Broker Policy Number", "Company Name", "Net Premium"]
+        self.cols = ["Corporate Partner/Broker Policy Number", "Company Name", "Net Premium"]
         self.path_extensions = ["xls", "xlsx", "xlsm"]
+        self.keep_cols = {"Policy": "Corporate_Partner_Broker_Policy_Number",
+                          "Company": "Company_Name",
+                          "File": "File",
+                          "Amount": "Net_Premium"}
         self.folder_path = folder_path
         self.client_name = client_name
 
@@ -29,8 +33,8 @@ class ExcelReader(FileReader):
         df = df[self.cols]
         df.columns = df.columns.str.replace(' ', '_')
         df.columns = df.columns.str.replace('/', '_')
-        df["Excel_File"] = file_path
-        df.dropna(subset=['Corporate_Partner_Broker_Policy_Number'])
+        df['Corporate_Partner_Broker_Policy_Number'].replace('', np.nan, inplace=True)
+        df = df.dropna(subset=['Corporate_Partner_Broker_Policy_Number'])
 
         return df
 
