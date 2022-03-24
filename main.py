@@ -1,7 +1,7 @@
 import sys
 import settings
-from readers import speacialpdfreader, excelreader
 from utils import toolselector as ts
+from matching import datamatch as dm
 
 
 def main(client: str):
@@ -13,13 +13,13 @@ def main(client: str):
     bord_reader = ts.select_reader(attributes["bordReader"])(attributes["folderPath"] + settings.BORDEREAU_EXTENSION,
                                                              client)
 
-    df_pay = pay_reader.create_table()
-    df_bord = bord_reader.create_table()
+    df_pay = pay_reader.create_table(save_path=attributes["folderPath"], read_type="Payment")
+    df_bord = bord_reader.create_table(save_path=attributes["folderPath"], read_type="Bordereau")
 
-    # data_match = select_payments_reader(attributes["redReader"])
-    # data_cleaner.__init__(folder_path=attributes["folderPath"], client_name=client)
+    data_match = dm.DataMatcher()
+    data_match.create_match_report(df_pay, df_bord)
 
-    # data_cleaner.create_report()
+    return
 
 
 if __name__ == '__main__':
@@ -33,3 +33,4 @@ if __name__ == '__main__':
 # ToDo create a make command to run the script
 # ToDo add OCR to the PDFReader init variables
 # ToDo make a readers class that excel and pdf inherent from
+# ToDo Create a debug and testing files for each important function
