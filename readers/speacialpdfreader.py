@@ -81,7 +81,17 @@ class LauPDFReader(PDFReader):
         return line_data
 
     def format_columns(self, df):
-        
+        df['pos_neg'] = df['Amount'].str.extract("(-)").fillna("")
+        df['Amount'] = df['Amount'].replace('(-)', '', regex=True, inplace=True)
+        df['Amount'] = df['Amount'].replace('(D|O|G|o)', '0', regex=True, inplace=True)
+        df['Amount'] = df['Amount'].replace('(S)', '5', regex=True, inplace=True)
+        df['Amount'] = df['Amount'].replace(',', '.', regex=True, inplace=True)
+        df["Amount"] = df['pos_neg'] + df["Amount"]
+
+        df["Amount"] = df['Amount'].astype('float')
+
+        df = df.drop('pos_neg', axis=1)
+
         return df
 
 
