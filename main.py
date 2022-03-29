@@ -24,10 +24,11 @@ def main(client: str):
 
 if __name__ == '__main__':
 
-    try:
-        main(sys.argv[1])
-    except IndexError:
-        main(settings.EXAMPLE_NAME)
+    # try:
+    #     main(sys.argv[1])
+    # except IndexError:
+    #     main(settings.EXAMPLE_NAME)
+    main(settings.EXAMPLE_NAME)
 
 # ToDo create a command line executable file
 # ToDo create a make command to run the script
