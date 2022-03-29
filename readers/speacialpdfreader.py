@@ -85,7 +85,7 @@ class LauPDFReader(PDFReader):
         df['Amount'] = df['Amount'].replace('(-)', '', regex=True, inplace=True)
         df['Amount'] = df['Amount'].replace('(D|O|G|o)', '0', regex=True, inplace=True)
         df['Amount'] = df['Amount'].replace('(S)', '5', regex=True, inplace=True)
-        df['Amount'] = df['Amount'].replace(',', '.', regex=True, inplace=True)
+        df['Amount'] = df['Amount'].replace(',', '.', regex=True, inplace=True) # make sure this is correct
         df["Amount"] = df['pos_neg'] + df["Amount"]
 
         df["Amount"] = df['Amount'].astype('float')
@@ -95,14 +95,22 @@ class LauPDFReader(PDFReader):
         return df
 
 
-
-class AgDFReader(PDFReader):
+class AgPDFReader(PDFReader):
 
     def __init__(self, folder_path, client_name):
         self.ocr = False
-        super(AgDFReader, self).__init__(self.ocr)
+        super(AgPDFReader, self).__init__(self.ocr)
         self.start_page = 0
-        self.cols = []
+        self.cols = ["Insured", "Producer #", "Carrier Doc Page #", "Carrier Doc Date", "Policy #",
+                     "Line Type / Coverage", "Effective Date", "Due Date", " Gross Due", "Commission Amount",
+                     "Current/Past Due", "Net Due"]
+        self.cols = ["Insured", "Carrier Doc Date", "Policy #",
+                     "Line Type / Coverage", "Effective Date", "Due Date", " Gross Due", "Commission Amount",
+                     "Net Due"]
+        self.keep_cols = {"Policy": "Policy #",
+                          "Company": "Insured",
+                          "File": "File",
+                          "Amount": "Net Due"}
         self.folder_path = folder_path
         self.client_name = client_name
 
@@ -114,16 +122,21 @@ class AgDFReader(PDFReader):
     def add_table_conditions(line_data):
         return len(line_data) > 5
 
-    def pre_table_adjustments(self, line_data):
+    def pre_table_adjustments(self, line_data: list):
         prod = self.find_date(line_data)
         company_name = "-".join(line_data[0:prod])
         line_data[0:prod] = [company_name]
+        line_data = [x for x in line_data if x not in ("P", "C", "B", "1", "2", "3")]  # B and 1-3 are an issue
+        # ToDo Join B, 1-3 back to the Policy number before
+        if len(line_data) == 8:
+            line_data.insert(4, "01/01/2010")  # This is an issue
         # line_data.append(page_num + 1)
         return line_data
 
     @staticmethod
     def start_table_conditions(line_data):
-        return line_data[0].lower() == "page"
+        return len(line_data) > 0 and line_data[0].lower() == "page"
+
 
 
 class VicPDFReader(PDFReader):
