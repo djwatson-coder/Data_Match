@@ -30,11 +30,12 @@ class FileReader:
 
         # read them in
         data_tables = []
-        for file in files:
+        for idx, file in enumerate(files):
+            print(f"{idx+1}. Reading File {file}...")
             table = self.read_file(file)
             table = table.assign(File=file)
             data_tables.append(table)
-            print(f"{file}: added")
+            #print(f"{file}: added")
 
         # create the table
         final_table = pd.concat(data_tables, ignore_index=True)
