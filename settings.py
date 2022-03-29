@@ -8,4 +8,4 @@ f = open("./client_information.json")
 CLIENT_INFORMATION = json.load(f)["client_information"]
 f.close()
 
-EXAMPLE_NAME = "Laureau"
+EXAMPLE_NAME = "Arthur Gallagher"
