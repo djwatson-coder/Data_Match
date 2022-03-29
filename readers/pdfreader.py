@@ -2,10 +2,7 @@
 
 import re
 import pandas as pd
-import os
 import pdfplumber
-import numpy
-import openpyxl
 from readers.filereader import FileReader
 pd.options.mode.chained_assignment = None
 
@@ -48,7 +45,7 @@ class PDFReader(FileReader):
                         start = True
 
         info_lines = self.join_company_data(info_lines, company_name)
-
+        #[print(f"{len(x)}: {x}") for x in info_lines]
         new_df = pd.DataFrame(info_lines, columns=self.cols)
 
         return new_df
@@ -63,6 +60,14 @@ class PDFReader(FileReader):
 
     @staticmethod
     def find_date(alist):
+        date_match = re.compile("\d{1,2}\/\d{1,2}\/\d{4}")
+        for idx, item in enumerate(alist):
+            if date_match.search(item):
+                return idx
+        return
+
+    @staticmethod
+    def find_currency(alist):
         date_match = re.compile("\d{1,2}\/\d{1,2}\/\d{4}")
         for idx, item in enumerate(alist):
             if date_match.search(item):
