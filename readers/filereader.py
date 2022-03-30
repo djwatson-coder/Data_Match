@@ -2,7 +2,7 @@
 import os
 import pandas as pd
 import settings
-
+pd.options.mode.chained_assignment = None
 
 class FileReader:
     def __init__(self):
@@ -58,6 +58,7 @@ class FileReader:
     def clean_table(self, df):
         df = self.correct_columns(df, self.keep_cols)
         df = self.format_columns(df)
+        df = self.general_clean(df)
 
         return df
 
@@ -74,4 +75,8 @@ class FileReader:
         return df
 
     def format_columns(self, df):
+        return df
+
+    def general_clean(self, df):
+        df["Amount"] = df["Amount"].astype('float')
         return df
