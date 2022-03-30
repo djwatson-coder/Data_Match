@@ -4,7 +4,7 @@ import re
 import pandas as pd
 import pdfplumber
 from readers.filereader import FileReader
-pd.options.mode.chained_assignment = None
+
 
 
 class PDFReader(FileReader):
