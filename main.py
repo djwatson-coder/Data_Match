@@ -13,11 +13,11 @@ def main(client: str):
     bord_reader = ts.select_reader(attributes["bordReader"])(attributes["folderPath"] + settings.BORDEREAU_EXTENSION,
                                                              client)
 
-    df_pay = pay_reader.create_table(save_path=attributes["folderPath"], read_type="Payment")
+    #df_pay = pay_reader.create_table(save_path=attributes["folderPath"], read_type="Payment")
     df_bord = bord_reader.create_table(save_path=attributes["folderPath"], read_type="Bordereau")
 
-    data_match = dm.DataMatcher()
-    data_match.create_match_report(df_pay, df_bord)
+    #data_match = dm.DataMatcher()
+    #data_match.create_match_report(df_pay, df_bord)
 
     return
 
