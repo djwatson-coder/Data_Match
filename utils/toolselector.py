@@ -1,14 +1,12 @@
 
-from readers import speacialpdfreader, excelreader
+from readers import speacialpdfreader, specialexcelreader
 
 
 def select_reader(reader_type: str):
     if "PDFReader" in reader_type:
         return getattr(speacialpdfreader, reader_type)
-    elif "ExcelReader" == reader_type:
-        return getattr(excelreader, reader_type)
     elif "ExcelReader" in reader_type:
-        return getattr(excelreader, reader_type)
+        return getattr(specialexcelreader, reader_type)
 
     return None
 
