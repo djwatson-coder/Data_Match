@@ -6,35 +6,41 @@ from readers.filereader import FileReader
 
 
 class ExcelReader(FileReader):
-    def __init__(self, folder_path: str, client_name: str):
+    def __init__(self):
         super(ExcelReader, self).__init__()
-        self.cols = ["Corporate Partner/Broker Policy Number", "Company Name", "Net Premium"]
         self.path_extensions = ["xls", "xlsx", "xlsm"]
-        self.keep_cols = {"Policy": "Corporate_Partner_Broker_Policy_Number",
-                          "Company": "Company_Name",
-                          "File": "File",
-                          "Amount": "Net_Premium"}
-        self.folder_path = folder_path
-        self.client_name = client_name
-
-        return
+        self.folder_path: str
+        self.client_name: str
 
     def read_file(self, file_path: str):
-
         excel_path = f"{self.folder_path}/{file_path}"
-        df = pd.read_excel(excel_path, sheet_name="Data Table")
-        df = self.format_excel(df, file_path)
-
+        df = pd.read_excel(excel_path)
         return df
 
     def format_excel(self, df, file_path: str):
-
-        # select the important columns
-        df = df[self.cols]
-        df.columns = df.columns.str.replace(' ', '_')
-        df.columns = df.columns.str.replace('/', '_')
-        df['Corporate_Partner_Broker_Policy_Number'].replace('', np.nan, inplace=True)
-        df = df.dropna(subset=['Corporate_Partner_Broker_Policy_Number'])
-
         return df
+
+    def find_position(self, file_path: str, names: list, sheet=0) -> int:
+        file_path = f"{self.folder_path}/{file_path}"
+        self.find_position(file_path)
+        df = pd.read_excel(file_path, sheet_name=sheet)
+        position = -1
+
+        for name in names:
+            if name in df.columns:
+                position = 0
+                break
+
+        for col_idx in range(len(df.columns)):
+            column = df.iloc[:, col_idx].tolist()
+            if pos := self.find_name(column, names) + 1:
+                position = pos
+                break
+        return position
+
+    def find_name(self, col, names):
+        for name in names:
+            if name in col:
+                return col.index(name)
+        return -1
 
