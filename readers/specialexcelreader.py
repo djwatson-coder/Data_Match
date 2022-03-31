@@ -41,10 +41,10 @@ class AgExcelReader(ExcelReader):
     def __init__(self, folder_path: str, client_name: str):
         super(AgExcelReader, self).__init__()
         self.cols = ["Corporate Partner/Broker Policy Number", "Company Name", "Net Premium"]
-        self.keep_cols = {"Policy": "Corporate_Partner_Broker_Policy_Number",
+        self.keep_cols = {"Policy": "Broker_Policy_Number",
                           "Company": "Company_Name",
                           "File": "File",
-                          "Amount": "Net_Premium"}
+                          "Amount": "Net_Amount"}
         self.folder_path = folder_path
         self.client_name = client_name
 
@@ -70,15 +70,14 @@ class AgExcelReader(ExcelReader):
 
         return df
 
-    def read_t1_file(self, file_path: str):
+    def read_t2_file(self, file_path: str):
         names = ["Corporate Partner/Broker Policy Number", "Broker Policy Number"]
         position = self.find_position(file_path, names, sheet="Data Table")
 
-        df = pd.read_excel(file_path, skiprows=position)
-        df = self.format_excel(df, file_path)
+        excel_path = f"{self.folder_path}/{file_path}"
+        df = pd.read_excel(excel_path, skiprows=position, sheet_name="Data Table")
 
         # Formatting -- move to a function
-        df = pd.read_excel(file_path, skiprows=position, sheet_name="Data Table")
         df = df[df.columns.drop(list(df.filter(regex='Unnamed')))]
         if "Corporate Partner/Broker Policy Number" in df.columns:
             df = df.rename(columns={"Corporate Partner/Broker Policy Number": "Broker Policy Number"})
