@@ -21,9 +21,8 @@ class ExcelReader(FileReader):
         return df
 
     def find_position(self, file_path: str, names: list, sheet=0) -> int:
-        file_path = f"{self.folder_path}/{file_path}"
-        self.find_position(file_path)
-        df = pd.read_excel(file_path, sheet_name=sheet)
+        excel_path = f"{self.folder_path}/{file_path}"
+        df = pd.read_excel(excel_path, sheet_name=sheet)
         position = -1
 
         for name in names:
