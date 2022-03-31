@@ -18,7 +18,7 @@ class FileReader:
     def get_files(self):
 
         files = []
-        for file in os.listdir(self.folder_path):
+        for file in os.listdir(f"{self.folder_path}"):
             if file.endswith(tuple(self.path_extensions)):
                 files.append(file)
         return files
