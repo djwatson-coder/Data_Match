@@ -7,5 +7,3 @@ BORDEREAU_EXTENSION = "/Bordereau"
 f = open("./client_information.json")
 CLIENT_INFORMATION = json.load(f)["client_information"]
 f.close()
-
-EXAMPLE_NAME = "Arthur Gallagher"

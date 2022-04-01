@@ -4,6 +4,7 @@ from utils import toolselector as ts
 import os
 import pandas as pd
 from datamanip import datamatch as dm
+import sys
 
 
 def main(client: str):
@@ -70,12 +71,7 @@ def write_report(data: dict, save_path: str, report_type: str, client_name: str)
 
 
 if __name__ == '__main__':
-
-    # try:
-    #     main(sys.argv[1])
-    # except IndexError:
-    #     main(settings.EXAMPLE_NAME)
-    main(settings.EXAMPLE_NAME)
+    main(sys.argv[1])
 
 # ToDo create a command line executable file
 # ToDo create a make command to run the script
