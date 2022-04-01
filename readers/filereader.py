@@ -39,11 +39,10 @@ class FileReader:
 
         # create the table
         final_table = pd.concat(data_tables, ignore_index=True)
-
         final_table = self.clean_table(final_table)
+        summary_table = self.summarise_table(final_table, key="File", group="Amount")
 
-        return final_table
-
+        return final_table, summary_table
 
 
     def clean_table(self, df):
@@ -81,5 +80,7 @@ class FileReader:
         df["Amount"] = df["Amount"].str.replace(')', '')
         df["Amount"] = df["Amount"].astype('float')
 
-
         return df
+
+    def summarise_table(self, df, key, group):
+        return df.groupby([key]).agg(Amount=(group, 'sum')).reset_index()
