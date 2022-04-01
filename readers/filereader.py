@@ -23,7 +23,7 @@ class FileReader:
                 files.append(file)
         return files
 
-    def create_table(self, save_path: str, read_type: str):
+    def create_table(self):
 
         # get the excels
         files = self.get_files()
@@ -42,18 +42,9 @@ class FileReader:
 
         final_table = self.clean_table(final_table)
 
-        if settings.WRITE_TABLE:
-            self.write_table(final_table, save_path, read_type)
-
         return final_table
 
-    def write_table(self, df, save_path, read_type):
-        path = f"{save_path}/Generated"
-        if not os.path.exists(path):
-            os.makedirs(path)
-        df.to_excel(f"{path}/{self.client_name}_{read_type}.xlsx")
 
-        print(f"{read_type} Table Written-----")
 
     def clean_table(self, df):
         df = self.correct_columns(df, self.keep_cols)
@@ -64,11 +55,10 @@ class FileReader:
 
     def correct_columns(self, df, cols: dict):
 
-        df.rename(columns={cols['Policy']: 'Policy',
-                           cols['Company']: 'Company',
-                           cols['File']: 'File',
-                           cols['Amount']: 'Amount'},
-                  inplace=True)
+        df = df.rename(columns={cols['Policy']: 'Policy',
+                                cols['Company']: 'Company',
+                                cols['File']: 'File',
+                                cols['Amount']: 'Amount'})
 
         df = df[["Policy", "Company", "File", "Amount"]]
 
@@ -78,5 +68,18 @@ class FileReader:
         return df
 
     def general_clean(self, df):
+
+        # Policy Column
+        df = df.dropna(subset=['Policy'])
+        df["Policy"] = df["Policy"].astype('str')
+
+        # Amount Column
+        df["Amount"] = df["Amount"].astype('str')
+        df["Amount"] = df["Amount"].str.replace('$', '')
+        df["Amount"] = df["Amount"].str.replace(',', '')
+        df["Amount"] = df["Amount"].str.replace('(', '-')
+        df["Amount"] = df["Amount"].str.replace(')', '')
         df["Amount"] = df["Amount"].astype('float')
+
+
         return df
