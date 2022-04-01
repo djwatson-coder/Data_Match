@@ -14,8 +14,8 @@ class ExcelReader(FileReader):
 
     def read_file(self, file_path: str):
         excel_path = f"{self.folder_path}/{file_path}"
-        df = pd.read_excel(excel_path)
-        return df
+        return pd.read_excel(excel_path)
+
 
     def format_excel(self, df, file_path: str):
         return df
