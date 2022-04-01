@@ -6,6 +6,7 @@ import numpy as np
 import warnings
 warnings.simplefilter("ignore")
 
+
 class LauExcelReader(ExcelReader):
     def __init__(self, folder_path: str, client_name: str):
         super(LauExcelReader, self).__init__()
@@ -54,13 +55,13 @@ class AgExcelReader(ExcelReader):
         xl = pd.ExcelFile(excel_path)
         if "master" in file_path.lower():
             new_folder = "T1"
-            # df = self.read_t1_file()
+            df = self.read_t2_file(file_path) # Need to create own function for this
         elif "Data Table" in xl.sheet_names:
             new_folder = "T2"
             df = self.read_t2_file(file_path)
         else:
             new_folder = "T3"
-            # df = self.read_t1_file()
+            df = self.read_t3_file(file_path)
 
         df = self.format_excel(df, file_path)
 
@@ -81,6 +82,24 @@ class AgExcelReader(ExcelReader):
         df = df[df.columns.drop(list(df.filter(regex='Unnamed')))]
         if "Corporate Partner/Broker Policy Number" in df.columns:
             df = df.rename(columns={"Corporate Partner/Broker Policy Number": "Broker Policy Number"})
+
+        df.columns = df.columns.str.replace(' ', '_')
+        df.columns = df.columns.str.replace('/', '_')
+
+        return df
+
+    def read_t3_file(self, file_path: str):
+        names = ["Corporate Partner/Broker Policy Number", "Broker Policy Number"]
+        position = self.find_position(file_path, names)
+
+        excel_path = f"{self.folder_path}/{file_path}"
+        df = pd.read_excel(excel_path, skiprows=position)
+
+        # Formatting -- move to a function
+        df = df[df.columns.drop(list(df.filter(regex='Unnamed')))]
+        if "Corporate Partner/Broker Policy Number" in df.columns:
+            df = df.rename(columns={"Corporate Partner/Broker Policy Number": "Broker Policy Number"})
+        df = df.rename(columns={"Net_Premium": "Net_Amount"})
         df.columns = df.columns.str.replace(' ', '_')
         df.columns = df.columns.str.replace('/', '_')
 
@@ -104,7 +123,8 @@ class AgPExcelReader(ExcelReader):
         names = ["Insured", "Insured Producer #"]
         position = self.find_position(file_path, names)
 
-        df = pd.read_excel(file_path, skiprows=position)
+        excel_path = f"{self.folder_path}/{file_path}"
+        df = pd.read_excel(excel_path, skiprows=position)
         df = self.format_excel(df, file_path)
 
         return df
