@@ -1,10 +1,8 @@
 
-
 import re
 import pandas as pd
 import pdfplumber
 from readers.filereader import FileReader
-
 
 
 class PDFReader(FileReader):
