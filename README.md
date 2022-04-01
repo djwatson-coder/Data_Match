@@ -1,3 +1,3 @@
 # Data Matching
 
-A system that reads in pdf and excel reports, matches data and creates a summary report
+A system that reads in pdf and excel data, matches them based on their primary key and creates a summary report
