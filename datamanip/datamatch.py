@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 
@@ -8,13 +7,12 @@ class DataMatcher:
         return
 
     def create_match_report(self, pay_df, bord_df):
-
         # Summarise the data
         pay_dfs = self.summarise_data(pay_df)
         bord_dfs = self.summarise_data(bord_df)
 
         # Change the names of each of the datasets
-        pay_dfs = {k: self.change_name(v,"Pay") for k,v in pay_dfs.items()}
+        pay_dfs = {k: self.change_name(v, "Pay") for k, v in pay_dfs.items()}
         bord_dfs = {k: self.change_name(v, "Bord") for k, v in bord_dfs.items()}
 
         print(pay_dfs["one"].head(10))
@@ -37,7 +35,7 @@ class DataMatcher:
         df_group = df_group.groupby(['Policy']).agg(Amount=('Amount', 'sum'),
                                                     Company=('Company', ', '.join),
                                                     Count=('Company', 'count'),
-                                                    File=('File', ', '.join), ).reset_index()
+                                                    File=('File', ', '.join)).reset_index()
 
         df_group_1 = df_group.query("Count == 1").drop(['Count'], axis=1)
         df_group_many = df_group.query("Count != 1").drop(['Count'], axis=1)
@@ -48,7 +46,6 @@ class DataMatcher:
         return summarised_data
 
     def change_name(self, df, name: str):
-
         df = df.rename(columns={'Company': f'{name}_Company',
                                 'File': f'{name}_File',
                                 'Amount': f'{name}_Amount'})
@@ -90,8 +87,38 @@ class DataMatcher:
         return matching | remaining
 
     def get_remaining_data(self, matching: dict, pay_df, bord_df) -> dict:
-        # Pay Remaining
+        matching_table = pd.concat(matching.values(), ignore_index=True)
+        matching_table = matching_table.assign(Exclude=1)
+        matching_table = matching_table.rename(columns={'Pay_Company': 'Company',
+                                                        'Pay_File': 'File',
+                                                        'Pay_Amount': 'Amount'})
 
-        # Bord Remaining
+        matching_table = matching_table[["Policy", "Company", "File", "Amount", "Exclude"]]
 
-        return matching
+        # Pay Remaining - collate the matching and anti-join on the pay_df
+        pdl = pd.merge(pay_df, matching_table,
+                       on=["Policy", "Company", "File", "Amount"], how='left')
+        pdl = pdl[pdl['Exclude'] != 1]
+        pdl = pdl.drop('Exclude', axis=1)
+
+        # Bord Remaining - collate the matching and anti-join on the bord_df
+        matching_table = pd.concat(matching.values(), ignore_index=True)
+        matching_table = matching_table.assign(Exclude=1)
+        matching_table = matching_table.rename(columns={'Bord_Company': 'Company',
+                                                        'Bord_File': 'File',
+                                                        'Bord_Amount': 'Amount'})
+
+        matching_table = matching_table[["Policy", "Company", "File", "Amount", "Exclude"]]
+
+        bdl = pd.merge(bord_df, matching_table,
+                       on=["Policy", "Company", "File", "Amount"], how='left')
+        bdl = bdl[bdl['Exclude'] != 1]
+        bdl = bdl.drop('Exclude', axis=1)
+
+        remaining = {"Bord_Unallocated": bdl,
+                     "Pay_Unallocated": pdl
+                     }
+
+        return remaining
+
+# ToDo Refactor the remaining script
