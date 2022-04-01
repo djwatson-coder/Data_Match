@@ -17,3 +17,4 @@ def get_attributes(client: str, information: dict):
             return client_info["attributes"]
 
     return None
+
