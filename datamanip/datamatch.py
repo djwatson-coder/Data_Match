@@ -2,9 +2,9 @@ import pandas as pd
 
 
 class DataMatcher:
-    def __init__(self):
-        self.match = "Yes"
-        return
+    def __init__(self, client):
+        self.client = client
+        pass
 
     def create_match_report(self, pay_df, bord_df):
         # Summarise the data
