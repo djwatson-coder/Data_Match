@@ -1,7 +1,9 @@
 
 from readers import speacialpdfreader, specialexcelreader
+from datamanip import datamatch
 import pandas as pd
 import os
+
 
 def select_reader(reader_type: str):
     if "PDFReader" in reader_type:
@@ -11,6 +13,8 @@ def select_reader(reader_type: str):
 
     return None
 
+def select_matcher(client: str):
+    return datamatch.DataMatcher(client)
 
 def get_attributes(client: str, information: dict):
     for client_info in information:
@@ -41,4 +45,3 @@ def write_report(data: dict, save_path: str, report_type: str, client_name: str)
             df.to_excel(writer, sheet_name=name, index=False)
 
     print(f"{report_type} Table Written-----")
-
