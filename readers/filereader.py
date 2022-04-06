@@ -1,6 +1,7 @@
 
 import os
 import pandas as pd
+import re
 import settings
 pd.options.mode.chained_assignment = None
 
@@ -31,11 +32,11 @@ class FileReader:
         # read them in
         data_tables = []
         for idx, file in enumerate(files):
-            print(f"{idx+1}. Reading File {file}...")
+            # print(f"{idx + 1}. Reading File {file}...")
             table = self.read_file(file)
             table = table.assign(File=file)
             data_tables.append(table)
-            #print(f"{file}: added")
+            print(f"{idx + 1}. {file}: added, length:{len(table)}")
 
         # create the table
         final_table = pd.concat(data_tables, ignore_index=True)
@@ -71,6 +72,11 @@ class FileReader:
         # Policy Column
         df = df.dropna(subset=['Policy'])
         df["Policy"] = df["Policy"].astype('str')
+        df["Policy"] = df["Policy"].str.replace('-', '')
+        df["Policy"] = df["Policy"].str.strip()
+        df["Policy"] = df["Policy"].str.replace(' ', '')
+        df["Policy"] = df["Policy"].str.upper()
+
 
         # Amount Column
         df["Amount"] = df["Amount"].astype('str')
@@ -79,8 +85,20 @@ class FileReader:
         df["Amount"] = df["Amount"].str.replace('(', '-')
         df["Amount"] = df["Amount"].str.replace(')', '')
         df["Amount"] = df["Amount"].astype('float')
+        df['Amount'] = df['Amount'].fillna(0)
 
         return df
 
     def summarise_table(self, df, key, group):
-        return df.groupby([key]).agg(Amount=(group, 'sum')).reset_index()
+
+        df[group] = df[group].fillna(0)
+        df = df.groupby([key]).agg(Amount=(group, 'sum')).reset_index()
+
+        # Used if there is an amount in the name of the file which shows the total
+        df['Name_Amount'] = df[key].str.extract(r'(\$[\d|,]*\.[\d]{2})', expand=True)
+        df['Name_Amount'] = df['Name_Amount'].str.replace(r'\$', '')
+        df['Name_Amount'] = df['Name_Amount'].str.replace(r',', '')
+        df['Name_Amount'] = df['Name_Amount'].astype(float)
+        df['Name_Amount_Check'] = df[group] - df['Name_Amount']
+
+        return df
