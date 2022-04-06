@@ -1,7 +1,5 @@
 
 import pandas as pd
-import numpy as np
-import os
 from readers.filereader import FileReader
 
 
@@ -29,7 +27,6 @@ class ExcelReader(FileReader):
             if name in df.columns:
                 position = 0
                 break
-
         for col_idx in range(len(df.columns)):
             column = df.iloc[:, col_idx].tolist()
             if pos := self.find_name(column, names) + 1:
