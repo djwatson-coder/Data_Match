@@ -3,6 +3,7 @@ from readers import speacialpdfreader, specialexcelreader
 from datamanip import datamatch
 import pandas as pd
 import os
+import shutil
 
 
 def select_reader(reader_type: str):
@@ -45,3 +46,20 @@ def write_report(data: dict, save_path: str, report_type: str, client_name: str)
             df.to_excel(writer, sheet_name=name, index=False)
 
     print(f"{report_type} Table Written-----")
+
+
+def find_all_files(dir, targ):
+    file_list = []
+    for filename in os.listdir(dir):
+        f = os.path.join(dir, filename)
+        if os.path.isfile(f):
+            print(filename)
+            shutil.copy(f, targ)
+
+            if filename.endswith("xlsx"):
+                xl = pd.ExcelFile(f"{dir}/{filename}")
+                file_list.append(f"{filename}: {xl.sheet_names}")
+
+        else:
+            file_list = file_list + find_all_files(f, targ)
+    return file_list
