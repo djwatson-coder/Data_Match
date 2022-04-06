@@ -21,7 +21,11 @@ class DataMatcher:
         match_results = self.match_datasets(pay_dfs, bord_dfs)
 
         # Find Remaining Data
-        remaining_data = self.get_remaining_data(match_results, pay_df, bord_df)
+        remaining_pay_df = self.get_remaining_data(match_results, pay_df, "Pay")
+        remaining_bord_df = self.get_remaining_data(match_results, bord_df, "Bord")
+
+        remaining_data = {"Bord_Unallocated": remaining_bord_df,
+                     "Pay_Unallocated": remaining_pay_df }
 
         # Create the exception reports
         exception_report = self.create_exception_reports(match_results, remaining_data)
@@ -75,7 +79,7 @@ class DataMatcher:
     def match_left(self, df1, df2, key="Policy", filter_column="Bord_File"):
         # Join the data frame on the key
         joined_data = pd.merge(df1, df2, on=key, how='left')
-        match = joined_data.dropna(subset=[key])
+        match = joined_data.dropna(subset=[filter_column])
         remaining = joined_data[joined_data[filter_column].isnull()]
         remaining = remaining[["Policy", "Pay_Company", "Pay_File", "Pay_Amount"]]
 
@@ -86,39 +90,20 @@ class DataMatcher:
         # ToDo further analysis on the results
         return matching | remaining
 
-    def get_remaining_data(self, matching: dict, pay_df, bord_df) -> dict:
+    def get_remaining_data(self, matching: dict, df, pre_name: str) -> dict:
         matching_table = pd.concat(matching.values(), ignore_index=True)
         matching_table = matching_table.assign(Exclude=1)
-        matching_table = matching_table.rename(columns={'Pay_Company': 'Company',
-                                                        'Pay_File': 'File',
-                                                        'Pay_Amount': 'Amount'})
+        matching_table = matching_table.rename(columns={f'{pre_name}_Company': 'Company',
+                                                        f'{pre_name}_File': 'File',
+                                                        f'{pre_name}_Amount': 'Amount'})
 
-        matching_table = matching_table[["Policy", "Company", "File", "Amount", "Exclude"]]
+        matching_table = matching_table[["Policy", "Company", "Exclude"]]
 
         # Pay Remaining - collate the matching and anti-join on the pay_df
-        pdl = pd.merge(pay_df, matching_table,
-                       on=["Policy", "Company", "File", "Amount"], how='left')
-        pdl = pdl[pdl['Exclude'] != 1]
-        pdl = pdl.drop('Exclude', axis=1)
+        rem_df = pd.merge(df, matching_table, on=["Policy"], how='left')
+        rem_df = rem_df[rem_df['Exclude'] != 1]
+        rem_df = rem_df.drop('Exclude', axis=1)
 
-        # Bord Remaining - collate the matching and anti-join on the bord_df
-        matching_table = pd.concat(matching.values(), ignore_index=True)
-        matching_table = matching_table.assign(Exclude=1)
-        matching_table = matching_table.rename(columns={'Bord_Company': 'Company',
-                                                        'Bord_File': 'File',
-                                                        'Bord_Amount': 'Amount'})
-
-        matching_table = matching_table[["Policy", "Company", "File", "Amount", "Exclude"]]
-
-        bdl = pd.merge(bord_df, matching_table,
-                       on=["Policy", "Company", "File", "Amount"], how='left')
-        bdl = bdl[bdl['Exclude'] != 1]
-        bdl = bdl.drop('Exclude', axis=1)
-
-        remaining = {"Bord_Unallocated": bdl,
-                     "Pay_Unallocated": pdl
-                     }
-
-        return remaining
+        return rem_df
 
 # ToDo Refactor the remaining script
