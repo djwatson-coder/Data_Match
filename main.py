@@ -7,6 +7,10 @@ import sys
 
 def main(client: str, create_data=True):
 
+    # dir = "C:/Users/david.watson/Documents/Clients/ARAG/AON/Bordereau/Bordereau_Sharefile documents received_29032022"
+    # target = "C:/Users/david.watson/Documents/Clients/ARAG/AON/Bordereau/Collated"
+    # fl = ts.find_all_files(dir, target)
+
     # Get the attributes of the client
     client_info = ts.get_attributes(client, settings.CLIENT_INFORMATION)
 
@@ -49,9 +53,11 @@ def main(client: str, create_data=True):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1], False)
+    main(sys.argv[1], True)
 
 # ToDo create a command line executable file
 # ToDo create a make command to run the script
 # ToDo Create a debug and testing files for each important function
 # ToDo Refactor the write table and write report function to one
+
+
