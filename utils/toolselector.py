@@ -53,12 +53,12 @@ def find_all_files(dir, targ):
     for filename in os.listdir(dir):
         f = os.path.join(dir, filename)
         if os.path.isfile(f):
-            print(filename)
             shutil.copy(f, targ)
+            file_list.append(filename)
 
-            if filename.endswith("xlsx"):
-                xl = pd.ExcelFile(f"{dir}/{filename}")
-                file_list.append(f"{filename}: {xl.sheet_names}")
+            # if filename.endswith("xlsx"):
+            #     xl = pd.ExcelFile(f"{dir}/{filename}")
+            #     file_list.append(f"{filename}: {xl.sheet_names}")
 
         else:
             file_list = file_list + find_all_files(f, targ)
