@@ -19,3 +19,14 @@ readers/__pycache__/filereader.cpython-310.pyc
 datamanip/__pycache__/datamatch.cpython-310.pyc
 datamanip/__pycache__/__init__.cpython-310.pyc
 readers/__pycache__/specialexcelreader.cpython-310.pyc
+readers/excelreaders/__pycache__/__init__.cpython-310.pyc
+readers/excelreaders/__pycache__/agbordxl.cpython-310.pyc
+readers/excelreaders/__pycache__/agpayxl.cpython-310.pyc
+readers/excelreaders/__pycache__/aonpayxl.cpython-310.pyc
+readers/excelreaders/__pycache__/laubordxl.cpython-310.pyc
+readers/excelreaders/__pycache__/otherxlreaders.cpython-310.pyc
+readers/pdfreaders/__pycache__/__init__.cpython-310.pyc
+readers/pdfreaders/__pycache__/agpaypdf.cpython-310.pyc
+readers/pdfreaders/__pycache__/laupaypdf.cpython-310.pyc
+readers/pdfreaders/__pycache__/otherpdfreaders.cpython-310.pyc
+utils/__pycache__/ostools.cpython-310.pyc
