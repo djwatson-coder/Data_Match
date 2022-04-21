@@ -14,19 +14,19 @@ class ExcelReader(FileReader):
         excel_path = f"{self.folder_path}/{file_path}"
         return pd.read_excel(excel_path)
 
-
     def format_excel(self, df, file_path: str):
         return df
 
     def find_position(self, file_path: str, names: list, sheet=0) -> int:
         excel_path = f"{self.folder_path}/{file_path}"
-        df = pd.read_excel(excel_path, sheet_name=sheet)
+        df = pd.read_excel(excel_path, sheet_name=sheet, nrows=100)
         position = -1
 
         for name in names:
             if name in df.columns:
                 position = 0
                 break
+
         for col_idx in range(len(df.columns)):
             column = df.iloc[:, col_idx].tolist()
             if pos := self.find_name(column, names) + 1:
