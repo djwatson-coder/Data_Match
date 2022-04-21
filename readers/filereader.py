@@ -1,8 +1,6 @@
 
 import os
 import pandas as pd
-import re
-import settings
 pd.options.mode.chained_assignment = None
 
 class FileReader:
@@ -76,7 +74,6 @@ class FileReader:
         df["Policy"] = df["Policy"].str.strip()
         df["Policy"] = df["Policy"].str.replace(' ', '')
         df["Policy"] = df["Policy"].str.upper()
-
 
         # Amount Column
         df["Amount"] = df["Amount"].astype('str')
