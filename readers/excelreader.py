@@ -1,7 +1,7 @@
 
 import pandas as pd
 from readers.filereader import FileReader
-
+import os
 
 class ExcelReader(FileReader):
     def __init__(self):
@@ -39,4 +39,29 @@ class ExcelReader(FileReader):
             if name in col:
                 return col.index(name)
         return -1
+
+    def categorise_excel(self, folder, not_counted_sheets, correct_name="Data Table"):
+        keep = []
+        remove = []
+        for file in self.get_files():
+            file_name = f"{folder}/{file}"
+            xl = pd.ExcelFile(file_name)
+            if len(list(xl.sheet_names)) > 8:
+                remove.append(file)
+            elif correct_name in xl.sheet_names:
+                keep.append(file)
+            else:
+                file_sheet_count = 0
+                for sheet in xl.sheet_names:
+                    df = pd.read_excel(file_name, sheet_name=sheet)
+                    if not df.empty and sheet not in not_counted_sheets:
+                        file_sheet_count += 1
+                if file_sheet_count != 1:
+                    remove.append(file)
+                else:
+                    keep.append(file)
+        print(len(keep))
+        print(len(remove))
+        print(remove)
+        return keep, remove
 
