@@ -5,6 +5,7 @@ import shutil
 from utils import toolselector as ts
 from pathlib import Path
 
+
 def get_attributes(client: str, information: dict):
     for client_info in information:
         if client_info["clientId"] == client:
@@ -23,6 +24,7 @@ def read_in_data(client: str, readers: list, file_path: str):
     sums = []
     for reader in readers:
         rdr = ts.select_reader(reader)(collated_file_path, client)
+        rdr.triage_data()  # put into the collated folder
         df, summary = rdr.create_table()
         dfs.append(df)
         sums.append(summary)
@@ -63,3 +65,13 @@ def create_directory(directory, remove=False):
     Path(directory).mkdir(parents=True, exist_ok=True)
     print(len(os.listdir(directory)))
 
+
+def move_files(path, destination, files, remove=False):
+    """ moves or copies files to a destination path"""
+    for file in files:
+        if os.path.isfile(f"{destination}/{file}"):
+            os.remove(f"{destination}/{file}")
+        if remove:
+            shutil.move(os.path.join(path, file), destination)
+        else:
+            shutil.copy(os.path.join(path, file), destination)
