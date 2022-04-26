@@ -22,6 +22,9 @@ class FileReader:
                 files.append(file)
         return files
 
+    def triage_data(self):
+        return
+
     def create_table(self):
 
         # get the excels
@@ -30,11 +33,11 @@ class FileReader:
         # read them in
         data_tables = []
         for idx, file in enumerate(files):
-            # print(f"{idx + 1}. Reading File {file}...")
+            print(f"{idx + 1}. Reading File {file}...")
             table = self.read_file(file)
             table = table.assign(File=file)
             data_tables.append(table)
-            print(f"{idx + 1}. {file}: added, length:{len(table)}")
+            # print(f"{idx + 1}. {file}: added, length:{len(table)}")
 
         # create the table
         final_table = pd.concat(data_tables, ignore_index=True)
