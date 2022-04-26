@@ -44,7 +44,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         main(sys.argv[1], True)
     else:
-        main("AG")
+        main("AG", True)
 
 
 # ToDo Create a debug and testing files for each important function
