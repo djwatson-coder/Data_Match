@@ -43,41 +43,67 @@ class AgExcelReader(ExcelReader):
         return df
 
     def read_type_file(self, file_path: str, sheet):
-        names = ["Corporate Partner/Broker Policy Number", "Broker Policy Number", "Aon Policy Number"]
+        names = ["Corporate Partner/Broker Policy Number", "Broker Policy Number", "Aon Policy Number",
+                 "Policy No.", "Das Policy Number", "Policy #", "DAS Policy Number", "Certificate No.",
+                 "POLICY_NUMBER"]
         position = self.find_position(file_path, names, sheet)
 
         excel_path = f"{self.folder_path}/{file_path}"
         df = pd.read_excel(excel_path, skiprows=position, sheet_name=sheet, nrows=1000)
 
-        df.columns = df.columns.str.replace(' ', '_')
-        df.columns = df.columns.str.replace('/', '_')
+        df.columns = df.columns.str.replace(' ', '')
+        df.columns = df.columns.str.replace('/', '')
+        df.columns = df.columns.str.replace('.', '')
+        df.columns = df.columns.str.replace('_', '')
+        df.columns = df.columns.str.lower()
 
         # Formatting -- move to a function
         # df = df[df.columns.drop(list(df.filter(regex='Unnamed')))]
-        if "Corporate_Partner_Broker_Policy_Number" in df.columns:
-            df = df.rename(columns={"Corporate_Partner_Broker_Policy_Number": "Broker_Policy_Number"})
-        if "Aon_Policy_Number" in df.columns:
-            df = df.rename(columns={"Aon_Policy_Number": "Broker_Policy_Number"})
-        if "DAS_Policy_Number" in df.columns and ("Broker_Policy_Number" not in df.columns):
-            df = df.rename(columns={"DAS_Policy_Number": "Broker_Policy_Number"})
-        if "Net_Premium" in df.columns and ("Net_Amount" not in df.columns):
-            df = df.rename(columns={"Net_Premium": "Net_Amount"})
-        if "Net_premium" in df.columns and ("Net_Amount" not in df.columns):
-            df = df.rename(columns={"Net_premium": "Net_Amount"})
+        BPN_Names = ["corporatepartnerbrokerpolicynumber",
+                     "aonpolicynumber",
+                     "corporatepartnernumber",
+                     "daspolicynumber",
+                     "policyno",
+                     "policy#",
+                     "certificateno",
+                     "policynumber"]
+        NAM_Names = ["netpremium",
+                     "daspremium",
+                     "netwrittenpremium",
+                     "daspolicynumber",
+                     "policyno",
+                     "totalpremium",
+                     "19-20daspremium",
+                     "appliedamount",
+                     "grosspremium",
+                     "premium"]  # be careful with this one - should come last
+
+        df = self.find_rename_columns(df, "brokerpolicynumber", BPN_Names)
+        df = self.find_rename_columns(df, "netamount", NAM_Names)
+
+        df = df.rename(columns={"brokerpolicynumber": "Broker_Policy_Number",
+                                "netamount": "Net_Amount"})
+
         if "Company_Name" not in df.columns:
             df["Company_Name"] = "No Company Name"
 
+        if "Broker_Policy_Number" not in df.columns or "Net_Amount" not in df.columns:
+            print(df.columns)
 
-
-
-        #print(df.columns)
         df = df[["Broker_Policy_Number", "Company_Name", "Net_Amount"]]
 
         return df
 
     def triage_data(self):
+        correct_names = ["Data Table", "AON Municipalities"]
         new_folder = f"{self.folder_path}/Excluded"
         ost.create_directory(new_folder)
-        keep_files, remove_files = self.categorise_excel(self.folder_path, ["SAMPLE"], "Data Table")
+        keep_files, remove_files = self.categorise_excel(self.folder_path, ["SAMPLE"], correct_names)
         ost.move_files(self.folder_path, new_folder, remove_files, remove=True)
         return
+
+    def find_rename_columns(self, df, correct_col, alt_cols):
+        for col in alt_cols:
+            if col in df.columns and correct_col not in df.columns:
+                df = df.rename(columns={col: correct_col})
+        return df
