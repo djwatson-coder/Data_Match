@@ -24,7 +24,7 @@ def read_in_data(client: str, readers: list, file_path: str):
     sums = []
     for reader in readers:
         rdr = ts.select_reader(reader)(collated_file_path, client)
-        rdr.triage_data()  # put into the collated folder
+        rdr.triage_data()  # put exculsion folder
         df, summary = rdr.create_table()
         dfs.append(df)
         sums.append(summary)
@@ -52,8 +52,9 @@ def collate_files(directory, targ):
         if os.path.isfile(f_path):
             shutil.copy(f_path, targ)
             file_list.append(filename)
+            # print(f_path)
         elif f_path != targ:
-            print(f_path)
+            print(f"Reading Folder:{f_path}")
             file_list = file_list + collate_files(f_path, targ)
     return file_list
 
@@ -63,7 +64,7 @@ def create_directory(directory, remove=False):
     if remove and os.path.exists(directory):
         shutil.rmtree(directory)
     Path(directory).mkdir(parents=True, exist_ok=True)
-    print(len(os.listdir(directory)))
+    # print(len(os.listdir(directory)))
 
 
 def move_files(path, destination, files, remove=False):
