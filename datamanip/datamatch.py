@@ -41,6 +41,8 @@ class DataMatcher:
         df_group = df.groupby(['Policy', "Company"]).agg(Amount=('Amount', 'sum'),
                                                          File=('File', ', '.join)).reset_index()
 
+        print(df_group)
+
         df_group = df_group.groupby(['Policy']).agg(Amount=('Amount', 'sum'),
                                                     Company=('Company', ', '.join),
                                                     Count=('Company', 'count'),
