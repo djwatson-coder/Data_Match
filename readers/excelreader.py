@@ -40,26 +40,36 @@ class ExcelReader(FileReader):
                 return col.index(name)
         return -1
 
-    def categorise_excel(self, folder, not_counted_sheets, correct_name="Data Table"):
+    def categorise_excel(self, folder, not_counted_sheets, correct_names):
         keep = []
         remove = []
-        for file in self.get_files():
+        for idx, file in enumerate(self.get_files()):
             file_name = f"{folder}/{file}"
-            xl = pd.ExcelFile(file_name)
-            if len(list(xl.sheet_names)) > 8:
-                remove.append(file)
-            elif correct_name in xl.sheet_names:
-                keep.append(file)
-            else:
-                file_sheet_count = 0
-                for sheet in xl.sheet_names:
-                    df = pd.read_excel(file_name, sheet_name=sheet)
-                    if not df.empty and sheet not in not_counted_sheets:
-                        file_sheet_count += 1
-                if file_sheet_count != 1:
+            print(f"{idx +1}. Triarging: Size: {os.path.getsize(file_name)/1000} {file}")
+            if os.path.getsize(file_name)/1000 < 500 \
+                    and ("member" not in file.lower()) \
+                    and ('booking' not in file.lower()) \
+                    and ('ps report' not in file.lower()) \
+                    and ('reconciliationprov' not in file.lower()) \
+                    and ('sumassure' not in file.lower()) \
+                    and ('bind' not in file.lower()):
+                xl = pd.ExcelFile(file_name)
+                if len(list(xl.sheet_names)) > 8:
                     remove.append(file)
-                else:
+                elif any(sheet in list(xl.sheet_names) for sheet in correct_names):
                     keep.append(file)
+                else:
+                    file_sheet_count = 0
+                    for sheet in xl.sheet_names:
+                        df = pd.read_excel(file_name, sheet_name=sheet, nrows=10)
+                        if not df.empty and sheet not in not_counted_sheets:
+                            file_sheet_count += 1
+                    if file_sheet_count != 1:
+                        remove.append(file)
+                    else:
+                        keep.append(file)
+            else:
+                remove.append(file)
         print(len(keep))
         print(len(remove))
         print(remove)
