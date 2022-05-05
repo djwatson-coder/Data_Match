@@ -24,7 +24,7 @@ def read_in_data(client: str, readers: list, file_path: str):
     sums = []
     for reader in readers:
         rdr = ts.select_reader(reader)(collated_file_path, client)
-        rdr.triage_data()  # put exculsion folder
+        rdr.triage_data()  # put in the exculsion folder
         df, summary = rdr.create_table()
         dfs.append(df)
         sums.append(summary)
