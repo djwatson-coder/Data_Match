@@ -8,10 +8,13 @@ warnings.simplefilter("ignore")
 class AgPExcelReader(ExcelReader):
     def __init__(self, folder_path: str, client_name: str):
         super(AgPExcelReader, self).__init__()
-        self.keep_cols = {"Policy": "Policy_#",
+        self.keep_cols = {"File": "File",
+                          "Policy": "Policy_#",
+                          "Effective_Date": "Effective_Date",
                           "Company": "Insured",
-                          "File": "File",
-                          "Amount": "Net_Due"}
+                          "Gross_Amount": "Gross_Due",
+                          "Commission_Amount": "Commission_Amount",
+                          "Net_Amount": "Net_Due"}
         self.folder_path = folder_path
         self.client_name = client_name
 
@@ -22,6 +25,7 @@ class AgPExcelReader(ExcelReader):
         excel_path = f"{self.folder_path}/{file_path}"
         df = pd.read_excel(excel_path, skiprows=position)
         df = self.format_excel(df, file_path)
+        # print(df.columns)
 
         return df
 
@@ -39,6 +43,7 @@ class AgPExcelReader(ExcelReader):
         df["Net_Due"] = df["Net_Due"].str.replace(',', '')
         df["Net_Due"] = df["Net_Due"].str.replace('(', '-')
         df["Net_Due"] = df["Net_Due"].str.replace(')', '')
+
         return df
 
 
