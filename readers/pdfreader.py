@@ -27,6 +27,8 @@ class PDFReader(FileReader):
                     line = self.specific_line_replacements(line)
                     line_data = line.split(" ")
                     line_data = self.post_line_split_edits(line_data)
+                    if self.skip_condition(line_data):
+                        continue
 
                     if self.end_table_conditions(line_data):
                         start = False
@@ -43,7 +45,10 @@ class PDFReader(FileReader):
                         start = True
 
         info_lines = self.join_company_data(info_lines, company_name)
-        #[print(f"{len(x)}: {x}") for x in info_lines]
+        # [print(f"{len(x)}: {x}") for x in info_lines]
+        # for line in info_lines:
+        #    if len(line) != 11:
+        #        print(line)
         new_df = pd.DataFrame(info_lines, columns=self.cols)
 
         return new_df
@@ -107,3 +112,16 @@ class PDFReader(FileReader):
     @staticmethod
     def join_company_data(info_lines, company_name):
         return info_lines
+
+    @staticmethod
+    def find_strings(alist, patterns):
+        for idx, item in enumerate(alist):
+            for pattern in patterns:
+                string_match = re.compile(pattern)
+                if string_match.search(item):
+                    return idx
+        return
+
+    @staticmethod
+    def skip_condition(line_data):
+        return False
