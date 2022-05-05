@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-class DataMatcher:
+class DataMatcher1:
     def __init__(self, client):
         self.client = client
         pass
@@ -28,25 +28,26 @@ class DataMatcher:
         # Create 1-Key matching Report:
         match_1_key = self.create_1_key_match_report(pay_df, bord_df)
 
-        # Create the exception reports
-        exception_report = self.create_exception_reports(match_results, remaining_data)
-        exception_report = self.create_exception_reports(exception_report, match_1_key)
+        # Create the exception reports match_1_key
+        final_report = self.create_exception_reports(match_1_key, match_results)
+        final_report = self.create_exception_reports(final_report, remaining_data)
 
-        return exception_report
+        return final_report
 
     def summarise_data(self, df):
 
         df["Policy"] = df["Policy"].str.upper()
+        df["Effective_Date"] = df["Effective_Date"].astype('str')
 
-        df_group = df.groupby(['Policy', "Company"]).agg(Amount=('Amount', 'sum'),
+        df_group = df.groupby(['Policy', "Effective_Date"]).agg(Amount=('Amount', 'sum'),
                                                          File=('File', ', '.join)).reset_index()
+        # print(df_group.head())
 
-        print(df_group)
-
-        df_group = df_group.groupby(['Policy']).agg(Amount=('Amount', 'sum'),
-                                                    Company=('Company', ', '.join),
-                                                    Count=('Company', 'count'),
-                                                    File=('File', ', '.join)).reset_index()
+        df_group = df_group.groupby(['Policy'])\
+            .agg(Amount=('Amount', 'sum'),
+                 Company=('Company', ', '.join),
+                 Count=('Company', 'count'),
+                 File=('File', ', '.join)).reset_index()
 
         df_group_1 = df_group.query("Count == 1").drop(['Count'], axis=1)
         df_group_many = df_group.query("Count != 1").drop(['Count'], axis=1)
@@ -177,4 +178,46 @@ class DataMatcher:
 
         return df[["Policy", f"{pre_name}Company", f"{pre_name}File", f"{pre_name}Amount"]]
 
+
 # ToDo Refactor the remaining script
+
+
+class DataMatcher:
+    def __init__(self, client):
+        self.client = client
+        pass
+
+    def create_match_report(self, pay_df, bord_df):
+
+        # Remove Exceptions in the Bordereau
+        bord_df, bord_issues = self.remove_exceptions(bord_df, df_type="BORD")
+
+        # Remove Exceptions in the Payments
+        pay_df, pay_issues = self.remove_exceptions(pay_df, df_type="PAY")
+
+        # Summarise the data
+        # pay_dfs = self.summarise_data(pay_df)
+        # bord_dfs = self.summarise_data(bord_df)
+        #
+        # # Change the names of each of the datasets
+        # pay_dfs = {k: self.change_name(v, "Pay") for k, v in pay_dfs.items()}
+        # bord_dfs = {k: self.change_name(v, "Bord") for k, v in bord_dfs.items()}
+
+    def remove_exceptions(self, df, df_type):
+
+        # Remove instances where the date is incorrect
+        issues_df = df.query("Effective_Date.str.len() <= 5")
+        remaining_df = df.query("Effective_Date.str.len() > 5")
+
+        # Remove instances where there are multiple Bordereaus
+        if df_type == "BORD":
+            df = df.groupby(['Policy', 'Effective_Date', 'Company']).agg(Count=('File', 'count')).reset_index()
+            df = df.query("Count != 1")  # .drop(['Count'], axis=1)
+            print(df.head())
+            print(len(df))
+
+        return remaining_df, issues_df
+
+
+
+
