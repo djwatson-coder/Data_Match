@@ -13,10 +13,14 @@ class AgPDFReader(PDFReader):
         self.cols = ["Insured", "Carrier Doc Date", "Policy #",
                      "Line Type / Coverage", "Effective Date", "Due Date", " Gross Due", "Commission Amount",
                      "Net Due"]
-        self.keep_cols = {"Policy": "Policy #",
+        self.keep_cols = {"File": "File",
+                          "Policy": "Policy #",
+                          "Effective_Date": "Effective Date",
                           "Company": "Insured",
-                          "File": "File",
-                          "Amount": "Net Due"}
+                          "Gross_Amount": " Gross Due",
+                          "Commission_Amount": "Commission Amount",
+                          "Net_Amount": "Net Due"}
+
         self.folder_path = folder_path
         self.client_name = client_name
 
