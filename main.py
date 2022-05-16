@@ -14,9 +14,11 @@ def main(client: str, create_data=True):
     if create_data:
 
         # Read in the Payment Data
+        print("CREATING PAYMENT DFs")
         df_pay, df_pay_sum = ost.read_in_data(client, client_info["paymentsReaders"],
                                               client_info["folderPath"] + settings.PAYMENTS_EXTENSION)
         # Read in the Bordereau Data
+        print("CREATING BORDEREAU DFs")
         df_bord, df_bord_sum = ost.read_in_data(client, client_info["bordReaders"],
                                                 client_info["folderPath"] + settings.BORDEREAU_EXTENSION)
         input_data = {
@@ -25,6 +27,8 @@ def main(client: str, create_data=True):
             "Payment Data": df_pay,
             "Payment Data Summary": df_pay_sum,
         }
+        
+        print("CREATING COLLATED INPUT DF")
         ost.write_report(input_data, client_info["folderPath"], "Input_Data", client)
 
     df_pay = pd.read_excel(client_info["folderPath"] + "/Generated/" + client + "_Input_Data.xlsx", "Payment Data")
