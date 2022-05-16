@@ -217,7 +217,3 @@ class DataMatcher:
             print(len(df))
 
         return remaining_df, issues_df
-
-
-
-
