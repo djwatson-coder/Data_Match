@@ -193,27 +193,89 @@ class DataMatcher:
         bord_df, bord_issues = self.remove_exceptions(bord_df, df_type="BORD")
 
         # Remove Exceptions in the Payments
-        pay_df, pay_issues = self.remove_exceptions(pay_df, df_type="PAY")
+        # pay_df, pay_issues = self.remove_exceptions(pay_df, df_type="PAY")
 
         # Summarise the data
-        # pay_dfs = self.summarise_data(pay_df)
-        # bord_dfs = self.summarise_data(bord_df)
-        #
+        pay_df_sum = self.summarise_data(pay_df)
+
         # # Change the names of each of the datasets
-        # pay_dfs = {k: self.change_name(v, "Pay") for k, v in pay_dfs.items()}
-        # bord_dfs = {k: self.change_name(v, "Bord") for k, v in bord_dfs.items()}
+        pay_df_sum = self.change_name(pay_df_sum, "Pay")
+        bord_df = self.change_name(bord_df, "Bord")
+        match, remaining = self.match_left(pay_df_sum, bord_df, ["Policy", "Effective_Date"])
+
+        final_data = {
+            "Matching": self.format_match(match),
+            "Remaining": remaining,
+            "Bordereau Issues": bord_issues
+        }
+
+        return final_data
 
     def remove_exceptions(self, df, df_type):
 
         # Remove instances where the date is incorrect
-        issues_df = df.query("Effective_Date.str.len() <= 5")
-        remaining_df = df.query("Effective_Date.str.len() > 5")
+        issues_df = df
+        remaining_df = df
 
         # Remove instances where there are multiple Bordereaus
         if df_type == "BORD":
-            df = df.groupby(['Policy', 'Effective_Date', 'Company']).agg(Count=('File', 'count')).reset_index()
-            df = df.query("Count != 1")  # .drop(['Count'], axis=1)
-            print(df.head())
-            print(len(df))
+            df_group = df.groupby(['Policy', 'Effective_Date']).agg(Count=('File', 'count')).reset_index()
+            issues_df = df_group.query("Count != 1")
+            issues_df = issues_df.drop('Count', axis=1)
+            issues_df = pd.merge(issues_df, df, on=['Policy', 'Effective_Date'], how='left')
+            remaining_df = df_group.query("Count == 1")
+            remaining_df = remaining_df.drop('Count', axis=1)
+            remaining_df = pd.merge(remaining_df, df, on=['Policy', 'Effective_Date'], how='left')
+            return remaining_df, issues_df
 
         return remaining_df, issues_df
+
+    def summarise_data(self, df):
+
+        df["Policy"] = df["Policy"].astype('str')
+        df["Effective_Date"] = df["Effective_Date"].astype('str')
+        df["File"] = df["File"].astype('str')
+        df["Company"] = df["Company"].astype('str')
+
+        # Summarise the Payments df:
+        df_group = df.groupby(['Policy', 'Effective_Date']).agg(File=('File', ', '.join),
+                                                                Company=('Company', ', '.join),
+                                                                Net_Amount=('Net_Amount', 'sum'),
+                                                                Gross_Amount=('Gross_Amount', 'sum'),
+                                                                Commission_Amount=('Commission_Amount', 'sum')
+                                                                ).reset_index()
+
+        return df_group
+
+    def change_name(self, df, name: str):
+        df = df.rename(columns={'Company': f'{name}_Company',
+                                'File': f'{name}_File',
+                                'Commission_Amount': f'{name}_Commission_Amount',
+                                'Gross_Amount': f'{name}_Gross_Amount',
+                                'Net_Amount': f'{name}_Net_Amount'})
+
+        return df
+
+    def match_left(self, df1, df2, keys, filter_column="Bord_File"):
+
+        # Join the data frame on the key
+        joined_data = pd.merge(df1, df2, on=keys, how='left')
+        match = joined_data.dropna(subset=[filter_column])
+        remaining = joined_data[joined_data[filter_column].isnull()]
+        remaining = remaining[["Policy", "Pay_Company", "Pay_File", "Pay_Gross_Amount", "Pay_Commission_Amount",
+                               "Pay_Net_Amount"]]
+
+        return match, remaining
+
+    def format_match(self, df):
+
+        df["NA_Diff"] = df["Bord_Net_Amount"] - df["Pay_Net_Amount"]
+        df["GA_Diff"] = df["Bord_Gross_Amount"] - df["Pay_Gross_Amount"]
+        df["CA_Diff"] = df["Bord_Commission_Amount"] - df["Pay_Commission_Amount"]
+        df = df[["Policy", "Effective_Date", "Pay_Company", "Bord_Company", "Pay_File", "Bord_File",
+                 "Bord_Net_Amount", "Pay_Net_Amount", "NA_Diff",
+                 "Bord_Gross_Amount", "Pay_Gross_Amount", "GA_Diff",
+                 "Bord_Commission_Amount", "Pay_Commission_Amount", "CA_Diff"
+                 ]]
+
+        return df
