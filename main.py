@@ -27,7 +27,7 @@ def main(client: str, create_data=True):
             "Payment Data": df_pay,
             "Payment Data Summary": df_pay_sum,
         }
-        
+
         print("CREATING COLLATED INPUT DF")
         ost.write_report(input_data, client_info["folderPath"], "Input_Data", client)
 
@@ -42,6 +42,7 @@ def main(client: str, create_data=True):
     ost.write_report(summary_report, client_info["folderPath"], "Summary_Report", client)
 
     return
+
 
 
 if __name__ == '__main__':
