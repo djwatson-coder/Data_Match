@@ -44,7 +44,6 @@ def main(client: str, create_data=True):
     return
 
 
-
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         main(sys.argv[1], True)
