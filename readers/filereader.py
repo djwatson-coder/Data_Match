@@ -150,3 +150,4 @@ class FileReader:
         df[col_name] = df[col_name].fillna(0)
 
         return df
+
