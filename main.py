@@ -48,7 +48,10 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         main(sys.argv[1], True)
     else:
-        main("AG", True)
+        # main("AG", True)
+
+        ost.excel_of_files(path="C:/Users/david.watson/Documents/Clients/ARAG/01. Data/Arthur Gallagher/Payments Raw",
+                           destination="C:/Users/david.watson/Documents/Clients/ARAG/01. Data/Arthur Gallagher")
 
 
 # ToDo Create a debug and testing files for each important function
