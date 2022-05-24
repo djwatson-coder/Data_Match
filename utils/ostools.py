@@ -76,3 +76,14 @@ def move_files(path, destination, files, remove=False):
             shutil.move(os.path.join(path, file), destination)
         else:
             shutil.copy(os.path.join(path, file), destination)
+
+
+def excel_of_files(path, destination):
+    all_files = []
+    for filename in os.listdir(path):
+        if os.path.isfile(f"{path}/{filename}"):
+            all_files.append([filename])
+
+    final_table = pd.DataFrame(all_files, columns=["Filename"])
+    final_table.to_excel(f"{destination}/all_files.xlsx")
+
