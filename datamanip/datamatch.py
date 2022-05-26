@@ -264,7 +264,7 @@ class DataMatcher:
         joined_data = pd.merge(df1, df2, on=keys, how='left')
         match = joined_data.dropna(subset=[filter_column])
         remaining = joined_data[joined_data[filter_column].isnull()]
-        remaining = remaining[["Policy", "Effecive_Date",
+        remaining = remaining[["Policy", "Effective_Date",
                                "Pay_Company", "Pay_File",
                                "Pay_Gross_Amount", "Pay_Commission_Amount", "Pay_Net_Amount"]]
 
