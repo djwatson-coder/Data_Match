@@ -1,4 +1,3 @@
-
 import pandas as pd
 from readers.filereader import FileReader
 import os
@@ -44,18 +43,18 @@ class ExcelReader(FileReader):
     def categorise_excel(self, folder, not_counted_sheets, correct_names):
         keep = []
         remove = []
-        file_limit = 1000  # KB
+        file_limit = 2000  # KB
         for idx, file in enumerate(self.get_files()):
             file_name = f"{folder}/{file}"
-            file_size = os.path.getsize(file_name)/1000
-            print(f"{idx +1}. Triarging: Size: {file_size} {file}")
-            if file_size < file_limit\
+            file_size = os.path.getsize(file_name) / 1000
+            print(f"{idx + 1}. Triarging: Size: {file_size} {file}")
+            if file_size < file_limit \
                     and ("member" not in file.lower()) \
                     and ('booking' not in file.lower()) \
                     and ('ps report' not in file.lower()) \
                     and ('reconciliationprov' not in file.lower()) \
-                    and ('sumassure' not in file.lower()) \
-                    and ('bind' not in file.lower()):
+                    and ('sumassure' not in file.lower()):  # \
+                # and ('bind' not in file.lower()):
                 xl = pd.ExcelFile(file_name)
                 if len(list(xl.sheet_names)) > 8:
                     remove.append(file)
@@ -73,6 +72,6 @@ class ExcelReader(FileReader):
                         keep.append(file)
             else:
                 remove.append(file)
-        print(f"Keep:{len(keep)}")
-        print(f"Remove{len(remove)}")
+        print(f"Keep: {len(keep)}")
+        print(f"Remove: {len(remove)}")
         return keep, remove
