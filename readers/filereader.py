@@ -36,6 +36,8 @@ class FileReader:
             print(f"{idx + 1}. Reading File {file}...")
             table = self.read_file(file)
             table = table.assign(File=file)
+            # print(table.head(10))
+            # print(table.columns)
             data_tables.append(table)
             # print(f"{idx + 1}. {file}: added, length:{len(table)}")
 
