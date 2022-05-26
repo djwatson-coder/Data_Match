@@ -48,10 +48,16 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         main(sys.argv[1], True)
     else:
-        main("BFL", True)
+        # main("BFL", True)
 
         # ost.excel_of_files(path="C:/Users/david.watson/Documents/Clients/ARAG/01. Data/Arthur Gallagher/Payments Raw",
         #                    destination="C:/Users/david.watson/Documents/Clients/ARAG/01. Data/Arthur Gallagher")
+
+        direct = "C:/Users/david.watson/Documents/Clients/ARAG/01. Data/Marsh/Raw Data - Copy/Bordereau"
+        targ = "C:/Users/david.watson/Documents/Clients/ARAG/01. Data/Marsh/Bordereau/Keep/New folder"
+        annoying_name = "LegalExpenseBordereauReport.xlsx"
+        ost.rename_annoying_files(direct, targ, annoying_name)
+
 
 
 # ToDo Create a debug and testing files for each important function
