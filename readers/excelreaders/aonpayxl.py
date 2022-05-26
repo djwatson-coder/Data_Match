@@ -9,15 +9,17 @@ class AonPExcelReader(ExcelReader):
     def __init__(self, folder_path: str, client_name: str):
         super(AonPExcelReader, self).__init__()
         self.keep_cols = {"Policy": "POLICY_NUMBER",
+                          "Effective_Date": "TRANSACTION_EFFECTIVE_DATE",
                           "Company": "Named_Insured_Name",
                           "File": "File",
-                          "Amount": "APPLIED_AMOUNT"}
+                          "Net_Amount": "APPLIED_AMOUNT",
+                          "Gross_Amount": "PREMIUM",
+                          "Commission_Amount": "COMMISSION"}
         self.folder_path = folder_path
         self.client_name = client_name
         self.row_skips = 9
 
     def read_file(self, file_path: str):
-
 
         excel_path = f"{self.folder_path}/{file_path}"
         xl = pd.ExcelFile(excel_path)
@@ -41,14 +43,18 @@ class AonPExcelReader(ExcelReader):
         return df
 
     def format_excel(self, df, file_path: str):
-        df = df[["POLICY_NUMBER", "Named_Insured_Name", "APPLIED_AMOUNT"]]
+        df = df[["POLICY_NUMBER", "Named_Insured_Name", "APPLIED_AMOUNT",
+                 "COMMISSION", "PREMIUM", "TRANSACTION_EFFECTIVE_DATE"]]
 
         return df
 
     def format_type_1(self, df):
         """ Skip 9 rows """
         df = df.rename(columns={"Policy Number\nNo de la Police": "POLICY_NUMBER",
+                                "Effective Date\nDate Effective": "TRANSACTION_EFFECTIVE_DATE",
                                 "Client Number\nNo du cliente": "Named_Insured_Name",
+                                "Premium\nPrime": "PREMIUM",
+                                "Commission": "COMMISSION",
                                 "Net Balance\nSolde": "APPLIED_AMOUNT"})
 
         return df
