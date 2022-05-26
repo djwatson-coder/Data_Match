@@ -11,8 +11,11 @@ class BflPayPdfReader(PDFReader):
                      "Trans Code", "Trans Amt", "Com", "Com Amt", "Rec Bal", "Payment"]
         self.keep_cols = {"Policy": "Policy Number",
                           "Company": "Client Name",
+                          "Effective_Date": "Effective Date",
                           "File": "File",
-                          "Amount": "Payment"}
+                          "Gross_Amount": "Trans Amt",
+                          "Commission_Amount": "Com Amt",
+                          "Net_Amount": "Payment"}
         self.folder_path = folder_path
         self.client_name = client_name
 
