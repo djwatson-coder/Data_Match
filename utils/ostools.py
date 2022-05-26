@@ -87,3 +87,22 @@ def excel_of_files(path, destination):
     final_table = pd.DataFrame(all_files, columns=["Filename"])
     final_table.to_excel(f"{destination}/all_files.xlsx")
 
+
+def rename_annoying_files(directory, targ, annoying_file_name):
+    """ Moves and renames annoying files so I don't have to do it manually"""
+    for filename in os.listdir(directory):
+        # f = os.path.join(directory, filename)
+        f_path = f"{directory}/{filename}"
+        if os.path.isfile(f_path):
+            # Rename the annoying file
+            if filename == annoying_file_name:
+                old_file = os.path.join(directory, filename)
+                new_file_name = f"{filename.split('.xlsx')[0]} - {directory.split('/')[-1]}.xlsx"
+                new_file = os.path.join(directory, new_file_name)
+                os.rename(old_file, new_file)
+                f_path = f"{directory}/{new_file_name}"
+                print(f"{filename} -> {new_file_name}")
+                shutil.move(f_path, targ)
+        elif f_path != targ:
+            print(f"Reading Folder:{f_path}")
+            rename_annoying_files(f_path, targ, annoying_file_name)
