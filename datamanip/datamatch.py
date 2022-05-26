@@ -201,12 +201,14 @@ class DataMatcher:
         # # Change the names of each of the datasets
         pay_df_sum = self.change_name(pay_df_sum, "Pay")
         bord_df = self.change_name(bord_df, "Bord")
-        match, remaining = self.match_left(pay_df_sum, bord_df, ["Policy", "Effective_Date"])
+        match, remaining_pay = self.match_left(pay_df_sum, bord_df, ["Policy", "Effective_Date"])
+        remaining_bord = self.get_remaining_bord(match, bord_df, "Bord")
 
         final_data = {
-            "Matching": self.format_match(match),
-            "Remaining": remaining,
-            "Bordereau Issues": bord_issues
+            "Complete Matching": self.format_match(match),
+            "Pay Remaining": remaining_pay,
+            "Bord Remaining": remaining_bord,
+            "Bordereau Duplicates": bord_issues
         }
 
         return final_data
@@ -262,8 +264,9 @@ class DataMatcher:
         joined_data = pd.merge(df1, df2, on=keys, how='left')
         match = joined_data.dropna(subset=[filter_column])
         remaining = joined_data[joined_data[filter_column].isnull()]
-        remaining = remaining[["Policy", "Pay_Company", "Pay_File", "Pay_Gross_Amount", "Pay_Commission_Amount",
-                               "Pay_Net_Amount"]]
+        remaining = remaining[["Policy", "Effecive_Date",
+                               "Pay_Company", "Pay_File",
+                               "Pay_Gross_Amount", "Pay_Commission_Amount", "Pay_Net_Amount"]]
 
         return match, remaining
 
@@ -279,3 +282,14 @@ class DataMatcher:
                  ]]
 
         return df
+
+    def get_remaining_bord(self, matching, df, pre_name="Bord"):
+        matching_table = matching.assign(Exclude=1)
+        matching_table = matching_table[["Policy", "Effective_Date", "Exclude"]]
+
+        # Pay Remaining - collate the matching and anti-join on the pay_df
+        rem_df = pd.merge(df, matching_table, on=["Policy"], how='left')
+        rem_df = rem_df[rem_df['Exclude'] != 1]
+        rem_df = rem_df.drop('Exclude', axis=1)
+
+        return rem_df
