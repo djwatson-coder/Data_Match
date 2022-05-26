@@ -148,6 +148,9 @@ class FileReader:
         df[col_name] = df[col_name].str.replace(',', '')
         df[col_name] = df[col_name].str.replace('(', '-')
         df[col_name] = df[col_name].str.replace(')', '')
+        df[col_name] = df[col_name].str.replace('s', '5')
+        df[col_name] = df[col_name].str.replace('o', '0')
+        df[col_name] = df[col_name].str.replace('O', '0')
         df[col_name] = df[col_name].astype('float')
         df[col_name] = df[col_name].fillna(0)
 
