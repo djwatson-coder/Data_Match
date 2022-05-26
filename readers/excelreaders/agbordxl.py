@@ -58,7 +58,8 @@ class AgExcelReader(ExcelReader):
 
         # Formatting -- move to a function
         # df = df[df.columns.drop(list(df.filter(regex='Unnamed')))]
-        BPN_Names = ["broker_policy_number", "corporate_partner_broker_policy_number", "das_policy_number"]
+        BPN_Names = ["broker_policy_number", "corporate_partner_broker_policy_number", "das_policy_number",
+                     "aon_policy_number"]
         EFD_Names = ["cover_from_date"]
         CPN_Names = ["company_name", "first_name"]
         NAM_Names = ["net_premium"]
