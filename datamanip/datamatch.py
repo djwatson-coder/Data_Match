@@ -288,7 +288,7 @@ class DataMatcher:
         matching_table = matching_table[["Policy", "Effective_Date", "Exclude"]]
 
         # Pay Remaining - collate the matching and anti-join on the pay_df
-        rem_df = pd.merge(df, matching_table, on=["Policy"], how='left')
+        rem_df = pd.merge(df, matching_table, on=["Policy", "Effective_Date"], how='left')
         rem_df = rem_df[rem_df['Exclude'] != 1]
         rem_df = rem_df.drop('Exclude', axis=1)
 
