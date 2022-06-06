@@ -1,6 +1,6 @@
 
 from readers.pdfreaders import agpaypdf, laupaypdf, otherpdfreaders, bflpaypdf
-from readers.excelreaders import agpayxl, agbordxl, aonpayxl, laubordxl, otherxlreaders, bflbordxl
+from readers.excelreaders import agpayxl, agbordxl, aonpayxl, laubordxl, otherxlreaders, bflbordxl, tgbordxl
 from datamanip import datamatch
 
 
@@ -32,7 +32,8 @@ def select_excel_reader(reader_type: str):
         "AgPExcelReader": agpayxl,
         "AonPExcelReader": aonpayxl,
         "AgExcelReader": agbordxl,
-        "BflPExcelReader": bflbordxl
+        "BflPExcelReader": bflbordxl,
+        "TgExcelReader": tgbordxl
     }
 
     if reader_type in excel_readers.keys():
